@@ -1,1 +1,322 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Team MOHFW – Casual Wear Order</title>
+  <style>
+    :root {
+      --primary: #0d4f3c;
+      --primary-light: #1a7a5c;
+      --accent: #1e8c6a;
+      --bg: #f4f7f5;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #5a6a62;
+      --border: #d8e5df;
+      --success: #0d7a4f;
+      --danger: #c0392b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; padding: 16px;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    header {
+      text-align: center; margin-bottom: 24px; padding: 20px 16px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(13, 79, 60, 0.25);
+    }
+    header h1 { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+    header p { font-size: 0.9rem; opacity: 0.9; }
+    .card {
+      background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid var(--border);
+    }
+    .card h2 { font-size: 1.1rem; color: var(--primary); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .polo-preview {
+      display: flex; justify-content: center; background: #eef5f1; border-radius: 12px; padding: 16px; margin-bottom: 8px;
+    }
+    .polo-preview img { max-width: 100%; height: auto; border-radius: 8px; max-height: 340px; object-fit: contain; }
+    .size-chart-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 12px; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: var(--text); }
+    label .required { color: var(--danger); }
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+      font-size: 1rem; background: #fafcfa; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(30, 140, 106, 0.18); background: white;
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235a6a62' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px;
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+      padding: 14px 20px; font-size: 1.05rem; font-weight: 600; border: none; border-radius: 12px;
+      cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white;
+      box-shadow: 0 4px 14px rgba(13, 79, 60, 0.3);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(13, 79, 60, 0.35); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-secondary {
+      background: white; color: var(--primary); border: 1.5px solid var(--border); margin-top: 10px;
+    }
+    .btn-secondary:hover { background: #f0f7f4; }
+    .btn-danger {
+      background: #fff5f5; color: var(--danger); border: 1.5px solid #f5c6c6; margin-top: 8px; font-size: 0.9rem; padding: 10px;
+    }
+    .success-message {
+      display: none; background: #e6f7ef; border: 1.5px solid #a8e0c4; color: var(--success);
+      padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 16px; font-weight: 500;
+    }
+    .success-message.show { display: block; animation: fadeIn 0.35s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .orders-section { display: none; }
+    .orders-section.visible { display: block; }
+    .order-list { list-style: none; }
+    .order-item {
+      display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 0;
+      border-bottom: 1px solid var(--border); font-size: 0.95rem;
+    }
+    .order-item:last-child { border-bottom: none; }
+    .order-item .meta { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+    .order-item .qty {
+      background: var(--primary); color: white; font-size: 0.8rem; font-weight: 600;
+      padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+    }
+    .size-hint { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+    footer { text-align: center; margin-top: 28px; padding-bottom: 20px; font-size: 0.8rem; color: var(--muted); }
+    @media (min-width: 600px) {
+      body { padding: 28px 20px; }
+      header h1 { font-size: 1.7rem; }
+      .card { padding: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Team MOHFW</h1>
+      <p>Milandhoo Health Centre – Casual Wear Order Form</p>
+    </header>
+
+    <div class="card">
+      <h2>👕 Casual Wear (Polo)</h2>
+      <div class="polo-preview">
+        <img src="polo.jpg" alt="Black polo shirt – Milandhoo Health Centre / TEAM MOHFW" />
+      </div>
+      <p style="text-align:center;font-size:0.85rem;color:var(--muted);">
+        Black polo with green accents • Front &amp; back design
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>📏 Size Chart</h2>
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">
+        All measurements are in inches. Data may vary by ±½ inch.
+      </p>
+      <img src="size-chart.jpg" alt="Adult and Kids size chart" class="size-chart-img" />
+    </div>
+
+    <div class="card">
+      <h2>📝 Place Your Order</h2>
+
+      <div id="successMsg" class="success-message">
+        ✅ Order saved! A CSV file with all submissions has been downloaded.
+      </div>
+
+      <form id="orderForm">
+        <div class="form-group">
+          <label for="name">Full Name <span class="required">*</span></label>
+          <input type="text" id="name" name="name" placeholder="e.g. Ahmed Mohamed" required autocomplete="name" />
+        </div>
+
+        <div class="form-group">
+          <label for="size">Size <span class="required">*</span></label>
+          <select id="size" name="size" required>
+            <option value="" disabled selected>Select your size</option>
+            <optgroup label="Adult">
+              <option value="2XS (Adult)">2XS – Width 16.5" / Length 23.5"</option>
+              <option value="XS (Adult)">XS – Width 17.5" / Length 24.5"</option>
+              <option value="S (Adult)">S – Width 18.5" / Length 25.5"</option>
+              <option value="M (Adult)">M – Width 19.5" / Length 26.5"</option>
+              <option value="L (Adult)">L – Width 20.5" / Length 27.5"</option>
+              <option value="XL (Adult)">XL – Width 21.5" / Length 28.5"</option>
+              <option value="2XL (Adult)">2XL – Width 22.5" / Length 29.5"</option>
+              <option value="3XL (Adult)">3XL – Width 23.5" / Length 30.5"</option>
+              <option value="4XL (Adult)">4XL – Width 24.5" / Length 30.5"</option>
+              <option value="5XL (Adult)">5XL – Width 25.5" / Length 30.5"</option>
+              <option value="6XL (Adult)">6XL – Width 26.5" / Length 30.5"</option>
+              <option value="7XL (Adult)">7XL – Width 27.5" / Length 31.5"</option>
+              <option value="8XL (Adult)">8XL – Width 28.5" / Length 31.5"</option>
+              <option value="9XL (Adult)">9XL – Width 29.5" / Length 31.5"</option>
+            </optgroup>
+            <optgroup label="Kids">
+              <option value="2XS (Kids)">2XS – Width 9.5" / Length 14.5"</option>
+              <option value="XS (Kids)">XS – Width 10.5" / Length 15.5"</option>
+              <option value="S (Kids)">S – Width 11.5" / Length 16.5"</option>
+              <option value="M (Kids)">M – Width 12.5" / Length 17.5"</option>
+              <option value="L (Kids)">L – Width 13.5" / Length 18.5"</option>
+              <option value="XL (Kids)">XL – Width 14.5" / Length 19.5"</option>
+              <option value="2XL (Kids)">2XL – Width 15.5" / Length 20.5"</option>
+              <option value="3XL (Kids)">3XL – Width 16.5" / Length 21.5"</option>
+              <option value="4XL (Kids)">4XL – Width 17.5" / Length 22.5"</option>
+            </optgroup>
+          </select>
+          <p class="size-hint">Refer to the size chart above for exact measurements</p>
+        </div>
+
+        <div class="form-group">
+          <label for="quantity">Number of pieces <span class="required">*</span></label>
+          <input type="number" id="quantity" name="quantity" min="1" max="20" value="1" required />
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Notes / Special requests (optional)</label>
+          <textarea id="notes" name="notes" placeholder="Any additional comments..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Order</button>
+      </form>
+    </div>
+
+    <div class="card orders-section" id="ordersSection">
+      <h2>📋 Collected Orders (<span id="orderCount">0</span>)</h2>
+      <ul class="order-list" id="orderList"></ul>
+      <button type="button" class="btn btn-secondary" id="exportBtn">⬇️ Download submissions file (CSV)</button>
+      <button type="button" class="btn btn-danger" id="clearBtn">Clear all orders</button>
+    </div>
+
+    <footer>
+      Team MOHFW • Milandhoo Health Centre<br />
+      Each submission downloads a CSV file • Data also kept in this browser until cleared
+    </footer>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'mohfw_casual_wear_orders';
+
+    function getOrders() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveOrders(orders) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function renderOrders() {
+      const orders = getOrders();
+      const section = document.getElementById('ordersSection');
+      const list = document.getElementById('orderList');
+      const countEl = document.getElementById('orderCount');
+
+      countEl.textContent = orders.length;
+
+      if (orders.length === 0) {
+        section.classList.remove('visible');
+        return;
+      }
+
+      section.classList.add('visible');
+      list.innerHTML = orders.map((o) => `
+        <li class="order-item">
+          <div>
+            <strong>${escapeHtml(o.name)}</strong>
+            <div class="meta">${escapeHtml(o.size)} • ${new Date(o.timestamp).toLocaleString()}</div>
+            ${o.notes ? `<div class="meta">Note: ${escapeHtml(o.notes)}</div>` : ''}
+          </div>
+          <span class="qty">×${o.quantity}</span>
+        </li>
+      `).join('');
+    }
+
+    function downloadCSV() {
+      const orders = getOrders();
+      if (orders.length === 0) return;
+
+      const headers = ['Name', 'Size', 'Quantity', 'Notes', 'Submitted At'];
+      const rows = orders.map(o => [
+        `"${o.name.replace(/"/g, '""')}"`,
+        `"${o.size}"`,
+        o.quantity,
+        `"${(o.notes || '').replace(/"/g, '""')}"`,
+        `"${new Date(o.timestamp).toLocaleString()}"`
+      ]);
+
+      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `MOHFW_Casual_Wear_Orders_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('orderForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const size = document.getElementById('size').value;
+      const quantity = parseInt(document.getElementById('quantity').value, 10);
+      const notes = document.getElementById('notes').value.trim();
+
+      if (!name || !size || !quantity || quantity < 1) {
+        alert('Please fill in all required fields correctly.');
+        return;
+      }
+
+      const orders = getOrders();
+      orders.push({
+        name,
+        size,
+        quantity,
+        notes,
+        timestamp: new Date().toISOString()
+      });
+      saveOrders(orders);
+
+      const msg = document.getElementById('successMsg');
+      msg.classList.add('show');
+      setTimeout(() => msg.classList.remove('show'), 4500);
+
+      this.reset();
+      document.getElementById('quantity').value = 1;
+
+      renderOrders();
+      downloadCSV();   // Auto-download the submissions file on every submit
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', downloadCSV);
+
+    document.getElementById('clearBtn').addEventListener('click', function () {
+      if (confirm('Are you sure you want to delete all collected orders? This cannot be undone.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderOrders();
+      }
+    });
+
+    renderOrders();
+  </script>
+</body>
+</html>
